@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebApplication1.Data;
 using WebApplication1.Models;
 
 namespace WebApplication1
@@ -34,14 +35,17 @@ namespace WebApplication1
             services.AddDbContext<WebApplication1Context>(options =>
                     options.UseMySql(Configuration.GetConnectionString("WebApplication1Context"), builder =>
             builder.MigrationsAssembly("WebApplication1")));
+
+            services.AddScoped<SeedingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, SeedingService seedingService)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                seedingService.Seed();
             }
             else
             {
